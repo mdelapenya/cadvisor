@@ -60,6 +60,7 @@ const (
 	serMemoryUsage string = "memory_usage"
 	// Working set size
 	serMemoryWorkingSet string = "memory_working_set"
+
 	// Cumulative count of bytes received.
 	serRxBytes string = "rx_bytes"
 	// Cumulative count of receive errors encountered.
@@ -68,6 +69,7 @@ const (
 	serTxBytes string = "tx_bytes"
 	// Cumulative count of transmit errors encountered.
 	serTxErrors string = "tx_errors"
+
 	// Filesystem device.
 	serFsDevice string = "fs_device"
 	// Filesystem limit.
@@ -208,8 +210,34 @@ func (self *influxdbStorage) containerStatsToPoints(
 	points = append(points, makePoint(serTxBytes, stats.Network.TxBytes))
 	points = append(points, makePoint(serTxErrors, stats.Network.TxErrors))
 
-	self.tagPoints(ref, stats, points)
+	// Network Stats per Interface
+	for _, interfaceStats := range stats.Network.Interfaces {
+		point := makePoint(serRxBytes, interfaceStats.RxBytes)
+		addTagsToPoint(point, map[string]string{
+			"interface": interfaceStats.Name,
+		})
+		points = append(points, point)
 
+		point = makePoint(serRxErrors, interfaceStats.RxErrors)
+		addTagsToPoint(point, map[string]string{
+			"interface": interfaceStats.Name,
+		})
+		points = append(points, point)
+
+		point = makePoint(serTxBytes, interfaceStats.TxBytes)
+		addTagsToPoint(point, map[string]string{
+			"interface": interfaceStats.Name,
+		})
+		points = append(points, point)
+
+		point = makePoint(serTxErrors, interfaceStats.TxErrors)
+		addTagsToPoint(point, map[string]string{
+			"interface": interfaceStats.Name,
+		})
+		points = append(points, point)
+	}
+
+	self.tagPoints(ref, stats, points)
 	return points
 }
 
