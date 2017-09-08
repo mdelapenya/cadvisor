@@ -140,9 +140,20 @@ func GetStats(cgroupManager cgroups.Manager, rootFs string, pid int, ignoreMetri
 		}
 	}
 
-	// For backwards compatibility.
 	if len(stats.Network.Interfaces) > 0 {
-		stats.Network.InterfaceStats = stats.Network.Interfaces[0]
+		for _, iface := range stats.Network.Interfaces {
+			stats.Network.Name = "all"
+
+			stats.Network.TxBytes += iface.TxBytes
+			stats.Network.TxErrors += iface.TxErrors
+			stats.Network.TxDropped += iface.TxDropped
+			stats.Network.TxPackets += iface.TxPackets
+
+			stats.Network.RxBytes += iface.RxBytes
+			stats.Network.RxErrors += iface.RxErrors
+			stats.Network.RxDropped += iface.RxDropped
+			stats.Network.RxPackets += iface.RxPackets
+		}
 	}
 
 	return stats, nil
