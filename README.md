@@ -1,3 +1,41 @@
+# WeDeploy fork
+
+The fork was created to address some issues that were not going to be fixed soon in the original repository:
+
+- whitelisting of docker labels  (https://github.com/google/cadvisor/pull/1735); and
+- wrong forwarding of network interface metrics to influxdb (https://github.com/google/cadvisor/issues/1737).
+
+In order to build, make sure you:
+
+- create the repository location following Golang conventions:
+
+```sh
+DESTINATION=$GOPATH/src/github.com/google/cadvisor
+
+mkdir -p $DESTINATION
+git clone https://github.com/cirocosta/cadvisor $DESTINATION
+```
+
+- build the source code
+
+```sh
+make build
+```
+
+Once the code has been built, the binary should now exist under the current directory:
+
+```sh
+stat ./cadvisor
+  File: ./cadvisor
+  Size: 24542656        Blocks: 47936      IO Block: 4096   regular file
+Device: 10005bh/1048667d        Inode: 21892180    Links: 1
+Access: (0755/-rwxr-xr-x)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2018-07-19 23:52:21.307066661 +0000
+Modify: 2018-07-19 23:52:09.346976982 +0000
+Change: 2018-07-19 23:52:09.346976982 +0000
+ Birth: -
+```
+
 # cAdvisor
 
 cAdvisor (Container Advisor) provides container users an understanding of the resource usage and performance characteristics of their running containers. It is a running daemon that collects, aggregates, processes, and exports information about running containers. Specifically, for each container it keeps resource isolation parameters, historical resource usage, histograms of complete historical resource usage and network statistics. This data is exported by container and machine-wide.
